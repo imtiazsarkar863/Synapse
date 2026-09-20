@@ -1307,8 +1307,11 @@
             '<circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>';
 
         function renderAuth() {
-            const email = getSession();
-            const user = email ? loadUsers()[email] : null;
+            const firebaseUser = window.firebaseAuthUser;
+            const email = firebaseUser ? firebaseUser.email : getSession();
+            const user = firebaseUser
+                ? { name: firebaseUser.displayName || firebaseUser.email, email: firebaseUser.email }
+                : email ? loadUsers()[email] : null;
             const area = $('auth-area');
             if (user) {
                 area.innerHTML =
@@ -1328,7 +1331,10 @@
                     e.stopPropagation();
                     $('user-dropdown').classList.toggle('open');
                 });
-                $('logout-btn').addEventListener('click', () => { setSession(null); renderAuth(); });
+                $('logout-btn').addEventListener('click', async () => {
+                    if (window.firebaseSignOut && firebaseUser) await window.firebaseSignOut();
+                    else { setSession(null); renderAuth(); }
+                });
             } else {
                 area.innerHTML = '<span class="login-prompt">login to save your progress</span>' +
                     '<button type="button" class="icon-btn" id="login-btn" ' +
@@ -1345,9 +1351,7 @@
 
         $('tab-login').addEventListener('click', () => setMode('login'));
         $('tab-signup').addEventListener('click', () => setMode('signup'));
-        $('google-login').addEventListener('click', () => {
-            $('auth-error').textContent = 'Google sign-in requires OAuth credentials and a backend.';
-        });
+        document.addEventListener('firebase-auth-changed', renderAuth);
         $('auth-close').addEventListener('click', closeAuth);
         $('auth-modal').addEventListener('click', (e) => { if (e.target === $('auth-modal')) closeAuth(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAuth(); });
@@ -1414,6 +1418,52 @@
                 event.preventDefault();
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            onAuthStateChanged,
+            signInWithPopup,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQa9ylu146ATY6WVK95n5RD1uoP7G2nB0",
+            authDomain: "synapse-55dd1.firebaseapp.com",
+            projectId: "synapse-55dd1",
+            storageBucket: "synapse-55dd1.firebasestorage.app",
+            messagingSenderId: "86874525171",
+            appId: "1:86874525171:web:dbd73d9f58ab814d725686",
+            measurementId: "G-91BK90CH3J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.firebaseSignOut = () => signOut(auth);
+
+        onAuthStateChanged(auth, (user) => {
+            window.firebaseAuthUser = user;
+            document.dispatchEvent(new Event('firebase-auth-changed'));
+        });
+
+        document.getElementById('google-login').addEventListener('click', async () => {
+            const error = document.getElementById('auth-error');
+            try {
+                error.textContent = '';
+                await signInWithPopup(auth, provider);
+                document.getElementById('auth-modal').classList.remove('open');
+                document.getElementById('auth-form').reset();
+            } catch (firebaseError) {
+                error.textContent = firebaseError.code === 'auth/popup-closed-by-user'
+                    ? 'Google sign-in was cancelled.'
+                    : firebaseError.message;
+            }
         });
     </script>
 </body>
