@@ -57,6 +57,67 @@ signs in or out.
 The current application logic, Firebase integration, simulator, and interface
 are contained in `index.html`.
 
+Email/password authentication is still a local browser demo. It stores demo
+accounts in localStorage and should not be used for real passwords or
+production account management.
+
+Before testing authentication:
+
+1. Open the Firebase Console.
+2. Select the Synapse project.
+3. Open **Authentication**.
+4. Enable the **Google** sign-in provider.
+5. Add `localhost` and your Vercel domain under **Authorized domains**.
+6. Confirm that the Firebase configuration in `index.html` belongs to the same project.
+
+The Firebase web configuration is intended for frontend use. Never place service-account private keys or other server secrets in `index.html`.
+
+The Google sign-in module reads the browser key from the generated
+`firebase-config.js` file. Set the `FIREBASE_API_KEY` environment variable in
+Vercel using a new Google API key restricted to this site's domains and Firebase
+APIs. The generated file is ignored by Git and is never committed.
+
+For Vercel, set the project **Build Command** to `node build.mjs`, then add
+`FIREBASE_API_KEY` under **Settings > Environment Variables** for Production.
+The key is still visible to browsers because Firebase browser keys are public,
+but it will not be exposed in the GitHub repository or secret-scanned history.
+
+### Leaked Firebase API Key
+
+If GitHub reports the old key as a leaked secret:
+
+1. Open Google Cloud Console for the Synapse project.
+2. Restrict or delete the exposed key under **APIs & Services > Credentials**.
+3. Create a replacement browser key with HTTP referrer restrictions for your
+	localhost and Vercel domains, and restrict its APIs to the Firebase APIs
+	required by the app.
+4. Configure `window.SYNAPSE_FIREBASE_API_KEY` with the replacement key.
+5. Close the GitHub alert only after the old key has been revoked.
+
+### Authentication Troubleshooting
+
+If Firebase displays `auth/unauthorized-domain`, the page is probably being
+opened from a `file://` URL or from a domain that Firebase does not recognize.
+Run the project through a web server and add the domain in Firebase:
+
+```bash
+python3 -m http.server 5500
+```
+
+For local testing, open `http://localhost:5500/index.html`. For production,
+open the Vercel URL and add that exact hostname under Firebase **Authorized
+domains**.
+
+## Deploy With Vercel
+
+1. Push the project to GitHub.
+2. Import the repository into Vercel.
+3. Use the project root as the deployment directory.
+4. Deploy without a build command because this is a static HTML project.
+5. Add the deployed Vercel domain to Firebase Authentication authorized domains.
+
+After deployment, open the Vercel URL instead of opening `index.html` directly from the filesystem.
+
 ## Project Structure
 
 ```text
