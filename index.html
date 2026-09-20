@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quantico:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #05070d;
+            padding-top: 73px; /* room for the fixed navbar */
+        }
+
+        /* ---------- Hero (video + welcome text) ---------- */
+        .hero {
+            position: relative;
+            height: calc(100vh - 73px);
+            min-height: 520px;
+            overflow: hidden;
+        }
+
+        .video {
+            display: flex;
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+            position: fixed; /* stays put while the page scrolls */
+            inset: 0;
+            object-fit: cover;
+            z-index: -1; /* behind all page content */
+            display: block;
+            filter: contrast(1.5);
+        }
+
+        .navbar {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.07);
+            -webkit-backdrop-filter: blur(18px) saturate(135%);
+            backdrop-filter: blur(18px) saturate(135%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+        }
+
+        .nav-container {
+            max-width: none;
+            height: 72px;
+            margin: 0;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e4dff6;
+            text-decoration: none;
+            font-size: 35px;
+            font-weight: 700;
+            font-family: "Dancing Script", cursive;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
+        /* Navigation links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 100px;
+            grid-column: 2;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 18px;
+            font-family: "Jim Nightshade", cursive;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #f8fafc;
+        }
+
+        .body {
+            color: #f8fcf8;
+            font-size: 30px;
+            font-family: "Jim Nightshade", cursive;
+            font-weight: 500;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .go {
+            padding: 9px 16px;
+            border: 1px solid #2b3648;
+            border-radius: 12px;
+            color: #f8fafc;
+            position: absolute;
+            text-decoration: none;
+            font-size: 16px;
+            font-family: "Jim Nightshade", cursive;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .go:hover {
+            background: #151c28;
+            border-color: #475569;
+        }
+
+        /* ---------- Simulator section (simple, calm) ---------- */
+        :root {
+            --calm-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --calm-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        }
+
+        .simulator {
+            background: rgba(255, 255, 255, 0.035);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 80px 24px 100px;
+            scroll-margin-top: 90px;
+            font-family: "Quantico", sans-serif;
+        }
+
+        .sim-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            color: #e5e7eb;
+        }
+
+        .sim-title {
+            font-size: 40px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-align: center;
+            font-family: "Quantico", sans-serif;
+        }
+
+        .sim-sub {
+            font-size: 18px;
+            color: #9ca3af;
+            text-align: center;
+            margin: 8px 0 32px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        #dna-input {
+            flex: 1 1 320px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            color: #f3f4f6;
+            font: 19px/1.4 var(--calm-mono);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            outline: none;
+            scroll-margin-top: 120px;
+        }
+
+        #dna-input:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #dna-input::placeholder {
+            color: #6b7280;
+            font-family: var(--calm-font);
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .btn {
+            padding: 14px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f3f4f6;
+            font: 500 17px var(--calm-font);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .simulator .btn {
+            font-family: "Quantico", sans-serif;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.primary {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.primary:hover {
+            background: rgba(255, 255, 255, 0.24);
+        }
+
+        .hint {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #9ca3af;
+        }
+
+        .error {
+            min-height: 22px;
+            margin-top: 10px;
+            font: 15px var(--calm-font);
+            color: #fca5a5;
+        }
+
+        .process-status {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            color: #cbd5e1;
+            font: 16px "Quantico", sans-serif;
+        }
+
+        .process-status.active {
+            display: flex;
+        }
+
+        .process-status::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-top-color: #e2e8f0;
+            border-radius: 50%;
+            animation: process-spin 0.8s linear infinite;
+        }
+
+        @keyframes process-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .results.show {
+            display: flex;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        .seq {
+            font-family: var(--calm-mono);
+            font-size: 22px;
+            letter-spacing: 3px;
+            line-height: 1.6;
+            word-break: break-all;
+            color: #f3f4f6;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            font-family: var(--calm-mono);
+            font-size: 16px;
+            color: #e5e7eb;
+        }
+
+        .chip.START {
+            color: #bbf7d0;
+            background: rgba(34, 197, 94, 0.18);
+            border-color: rgba(74, 222, 128, 0.7);
+        }
+
+        .chip.STOP {
+            color: #fecaca;
+            background: rgba(239, 68, 68, 0.18);
+            border-color: rgba(248, 113, 113, 0.7);
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #9ca3af;
+        }
+
+        /* ---------- Navbar right side + auth ---------- */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            grid-column: 3;
+            justify-self: end;
+        }
+
+        #auth-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-prompt {
+            margin-right: 10px;
+            color: #cbd5e1;
+            font: 16px "Jim Nightshade", cursive;
+            animation: breathe 2.4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                opacity: 0.45;
+                transform: scale(0.98);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid #2b3648;
+            background: transparent;
+            color: #f8fafc;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font: 500 15px var(--calm-font);
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: #151c28;
+            border-color: #475569;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            min-width: 190px;
+            padding: 12px;
+            background: rgba(13, 18, 28, 0.96);
+            border: 1px solid #2b3648;
+            border-radius: 12px;
+            font-family: var(--calm-font);
+        }
+
+        .user-dropdown.open {
+            display: block;
+        }
+
+        .ud-name {
+            color: #f3f4f6;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .ud-email {
+            margin: 2px 0 12px;
+            color: #9ca3af;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .ud-logout {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #2b3648;
+            background: transparent;
+            color: #f3f4f6;
+            font: 14px var(--calm-font);
+            cursor: pointer;
+        }
+
+        .ud-logout:hover {
+            background: #151c28;
+        }
+
+        @media (max-width: 1000px) {
+            .nav-links { gap: 32px; }
+        }
+
+        @media (max-width: 720px) {
+            .nav-links { display: none; }
+        }
+
+        /* ---------- Login popup ---------- */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(3, 5, 10, 0.75);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-modal.open {
+            display: flex;
+        }
+
+        .auth-box {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            background: rgba(13, 18, 28, 0.82);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 20px;
+            padding: 32px;
+            color: #e5e7eb;
+            font-family: var(--calm-font);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        }
+
+        .auth-heading {
+            margin-bottom: 6px;
+            color: #f8fafc;
+            font: 700 28px "Quantico", sans-serif;
+            text-align: center;
+        }
+
+        .auth-subheading {
+            margin-bottom: 22px;
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 8px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .auth-close:hover {
+            color: #f8fafc;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            margin-right: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #2b3648;
+            background: transparent;
+            color: #9ca3af;
+            font: 500 15px var(--calm-font);
+            cursor: pointer;
+        }
+
+        .auth-tab.active {
+            background: #151c28;
+            color: #f8fafc;
+            border-color: #64748b;
+        }
+
+        .google-login {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding: 11px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.94);
+            color: #1f2937;
+            font: 600 14px var(--calm-font);
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .google-login:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 4px;
+            color: #64748b;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .auth-box label {
+            display: block;
+            margin: 12px 0 6px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #080b12;
+            border: 1px solid #2b3648;
+            border-radius: 10px;
+            color: #f8fafc;
+            font: 16px var(--calm-font);
+            outline: none;
+        }
+
+        .auth-box input:focus {
+            border-color: #94a3b8;
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .auth-note {
+            margin-top: 14px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #6b7280;
+        }
+
+        .process-section {
+            padding: 80px 24px 100px;
+            background: rgba(255, 255, 255, 0.04);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .process-inner {
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        .process-step {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 0.8fr);
+            gap: 40px;
+            align-items: center;
+        }
+
+        .process-step h2 {
+            grid-column: 1;
+            margin-bottom: 18px;
+            color: #f3f4f6;
+            font: 500 42px "Jim Nightshade", cursive;
+            font-family: "Quantico", sans-serif;
+            text-align: left;
+            scroll-margin-top: 90px;
+        }
+
+        .process-video {
+            grid-column: 1;
+            display: block;
+            width: 100%;
+            max-height: 520px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            filter: contrast(1.76);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .process-description {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            margin: 0;
+            max-width: 820px;
+            color: #cbd5e1;
+            font: 16px/1.7 "Quantico", sans-serif;
+            text-align: left;
+            opacity: 0;
+            transform: translateX(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .process-description.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .process-arrow {
+            margin: 96px 0;
+            color: #94a3b8;
+            font-size: 30px;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding-top: 64px;
+            }
+
+            .nav-container {
+                height: 63px;
+                padding: 0 14px;
+            }
+
+            .logo {
+                gap: 6px;
+                font-size: 27px;
+            }
+
+            .logo-icon {
+                font-size: 22px;
+            }
+
+            .nav-right {
+                gap: 0;
+            }
+
+            .login-prompt {
+                display: none;
+            }
+
+            .hero {
+                height: calc(100vh - 64px);
+                min-height: 500px;
+            }
+
+            .body {
+                width: 90%;
+                font-size: 24px;
+            }
+
+            .go {
+                width: auto;
+                min-width: 170px;
+                font-size: 15px;
+                white-space: nowrap;
+            }
+
+            .simulator {
+                padding: 56px 16px 72px;
+            }
+
+            .sim-inner {
+                width: 100%;
+            }
+
+            .sim-title {
+                font-size: 32px;
+            }
+
+            .sim-sub {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            .input-row {
+                gap: 10px;
+            }
+
+            #dna-input,
+            .simulator .btn {
+                width: 100%;
+                flex: 1 1 100%;
+                box-sizing: border-box;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .seq {
+                font-size: 18px;
+                letter-spacing: 2px;
+            }
+
+            .chip {
+                font-size: 14px;
+            }
+
+            .auth-box {
+                max-height: calc(100vh - 32px);
+                overflow-y: auto;
+                padding: 26px 20px;
+            }
+
+            .process-step {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 18px;
+            }
+
+            .process-step h2 {
+                font-size: 32px;
+                margin-bottom: 0;
+            }
+
+            .process-section {
+                padding: 56px 16px 72px;
+            }
+
+            .process-inner {
+                width: 100%;
+            }
+
+            .process-video {
+                max-height: none;
+            }
+
+            .process-description {
+                transform: translateY(24px);
+            }
+
+            .process-description.visible {
+                transform: translateY(0);
+            }
+
+            .contact-list {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-section {
+                padding: 52px 16px 64px;
+            }
+        }
+
+        .contact-section {
+            padding: 72px 24px 80px;
+            background: transparent;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+        }
+
+        .contact-list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            min-width: 0;
+            padding: 8px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-item h2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font: 700 13px "Quantico", sans-serif;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .contact-icon {
+            width: 17px;
+            height: 17px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .contact-item a {
+            display: block;
+            max-width: 100%;
+            color: #e2e8f0;
+            font: 14px/1.6 "Quantico", sans-serif;
+            overflow-wrap: anywhere;
+            text-decoration: none;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .contact-item a:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <video src="dna.mp4" muted loop autoplay playsinline class="video"></video>
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <a href="#" class="logo">
+                <span class="logo-icon">🧬</span>
+                <span>Synapse</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#simulator">Simulator</a>
+                <a href="#replication">Replication</a>
+                <a href="#transcription">Transcription</a>
+                <a href="#translation">Translation</a>
+            </div>
+
+            <div class="nav-right">
+                <div id="auth-area"></div>
+            </div>
+
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="body">
+            Welcome to Synapse!
+            <br><br>
+            This is a simple simulator for DNA replication. You can use the simulator to
+            visualize the process of DNA replication and understand how it works. Enjoy exploring!
+        </div>
+        <a href="#simulator" class="go">
+            Let's Get Started ↓
+        </a>
+    </section>
+
+    <section class="simulator" id="simulator">
+        <div class="sim-inner">
+            <h2 class="sim-title">Simulator</h2>
+            <p class="sim-sub">Enter one strand of DNA to see replication, transcription and translation.</p>
+
+            <div class="input-row">
+                <input id="dna-input" type="text" autocomplete="off" spellcheck="false"
+                    placeholder="e.g. TACGGGCTATTTACT">
+                <button class="btn primary" id="run-btn">Run simulation</button>
+                <button class="btn" id="example-btn">Example</button>
+                <button class="btn" id="clear-btn">Clear</button>
+            </div>
+            <p class="hint">Use only A, T, G and C. Spaces and lowercase are fine.</p>
+            <p class="error" id="error"></p>
+            <p class="process-status" id="process-status" aria-live="polite"></p>
+
+            <div class="results" id="results">
+                <div class="card">
+                    <h3>Your DNA strand</h3>
+                    <div class="seq" id="out-dna"></div>
+                </div>
+                <div class="card">
+                    <h3>After replication (complementary strand)</h3>
+                    <div class="seq" id="out-comp"></div>
+                </div>
+                <div class="card">
+                    <h3>After transcription (mRNA)</h3>
+                    <div class="seq" id="out-mrna"></div>
+                </div>
+                <div class="card">
+                    <h3>Codons (groups of 3 bases)</h3>
+                    <div class="chips" id="out-codons"></div>
+                    <p class="note" id="out-leftover"></p>
+                </div>
+                <div class="card">
+                    <h3>Translation</h3>
+                    <div class="chips" id="out-translation"></div>
+                    <p class="note" id="out-nostart"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-label="Account">
+        <div class="auth-box">
+            <button type="button" class="auth-close" id="auth-close" aria-label="Close">&times;</button>
+            <h2 class="auth-heading">Welcome back</h2>
+            <p class="auth-subheading">Sign in to save your progress</p>
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="tab-login">Log in</button>
+                <button type="button" class="auth-tab" id="tab-signup">Sign up</button>
+            </div>
+            <button type="button" class="google-login" id="google-login">
+                <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4" d="M21.35 12.27c0-.72-.06-1.42-.18-2.09H12v3.96h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.25Z"></path>
+                    <path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.7-1.72-5.47-4.03H3.29v2.52A9.74 9.74 0 0 0 12 21.75Z"></path>
+                    <path fill="#FBBC05" d="M6.53 13.84A5.85 5.85 0 0 1 6.22 12c0-.64.11-1.26.31-1.84V7.64H3.29A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.04 4.36l3.24-2.52Z"></path>
+                    <path fill="#EA4335" d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.23 14.63 2.25 12 2.25a9.74 9.74 0 0 0-8.71 5.39l3.24 2.52C7.3 7.85 9.46 6.13 12 6.13Z"></path>
+                </svg>
+                Continue with Google
+            </button>
+            <div class="auth-divider">or use email</div>
+            <form id="auth-form" novalidate>
+                <div id="auth-name-row" style="display:none">
+                    <label for="auth-name">Name</label>
+                    <input id="auth-name" type="text" autocomplete="name">
+                </div>
+                <label for="auth-email">Email</label>
+                <input id="auth-email" type="email" autocomplete="email">
+                <label for="auth-password">Password</label>
+                <input id="auth-password" type="password" autocomplete="current-password">
+                <p class="error" id="auth-error"></p>
+                <button type="submit" class="btn primary auth-submit" id="auth-submit">Log in</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="process-section" aria-label="DNA process videos">
+        <div class="process-inner">
+            <div class="process-step">
+                <h2 id="replication">Replication</h2>
+                <video class="process-video" src="replicatin.mov" muted playsinline></video>
+                <p class="process-description"><strong>DNA replication</strong> is the biological process by which a cell produces an exact copy of its DNA, occurring during the <strong>S phase</strong> of the cell cycle's interphase. It is <strong>semiconservative</strong>, meaning each new DNA molecule consists of one parental strand and one newly synthesized strand.</p>
+            </div>
+
+            <div class="process-arrow" aria-hidden="true">↓</div>
+
+            <div class="process-step">
+                <h2 id="transcription">Transcription</h2>
+                <video class="process-video" src="transcription.mov" muted playsinline></video>
+                <p class="process-description"><strong>Transcription</strong> is the process of copying genetic information from a <strong>DNA</strong> template into <strong>RNA</strong>, serving as the first step in gene expression. It occurs in the <strong>nucleus</strong> of <strong>eukaryotic</strong> cells and is catalyzed by the enzyme <strong>RNA polymerase</strong>, which synthesizes RNA in the <strong>5' to 3'</strong> direction.</p>
+            </div>
+
+            <div class="process-arrow" aria-hidden="true">↓</div>
+
+            <div class="process-step">
+                <h2 id="translation">Translation</h2>
+                <video class="process-video" src="translati.mov" muted playsinline></video>
+                <p class="process-description"><strong>Translation</strong> is the cellular process in <strong>Class 12 Biology</strong> where ribosomes decode the sequence of nucleotides in <strong>mRNA</strong> to synthesize a specific chain of amino acids, forming a <strong>polypeptide</strong>. This second step of gene expression converts genetic information from the "language" of nucleic acids into the "language" of proteins, occurring in the <strong>cytoplasm</strong> following transcription.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" aria-label="Contact links">
+        <div class="contact-list">
+            <div class="contact-item">
+                <h2><svg class="contact-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>Email</h2>
+                <a href="mailto:imtiazsarkar863@gmail.com">imtiazsarkar863@gmail.com</a>
+            </div>
+            <div class="contact-item">
+                <h2><svg class="contact-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>Insta</h2>
+                <a href="https://www.instagram.com/_iamtheeog_/" target="_blank" rel="noopener noreferrer">instagram.com/_iamtheeog_</a>
+            </div>
+            <div class="contact-item">
+                <h2><svg class="contact-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 10v6M8 8v.1M12 16v-3a2 2 0 0 1 4 0v3M12 10v6"></path></svg>LinkedIn</h2>
+                <a href="https://www.linkedin.com/in/imtiaz-sarkar-965538385/" target="_blank" rel="noopener noreferrer">linkedin.com/in/imtiaz-sarkar</a>
+            </div>
+            <div class="contact-item">
+                <h2><svg class="contact-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 17c.3-1.4-.1-2.4-1-3.1M15.5 17c-.3-1.4.1-2.4 1-3.1M9 9.5c.8-.8 1.7-1 3-1s2.2.2 3 1M9 14c.8.7 1.7 1 3 1s2.2-.3 3-1"></path></svg>GitHub</h2>
+                <a href="https://github.com/imtiazsarkar863" target="_blank" rel="noopener noreferrer">github.com/imtiazsarkar863</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // ================= DNA logic (browser-safe port of the Node/Java code) =================
+        const COMPLEMENT = { A: 'T', T: 'A', G: 'C', C: 'G' };
+        const TRANSCRIBE = { A: 'U', T: 'A', G: 'C', C: 'G' };
+
+        const CODON_GROUPS = {
+            'Methionine (START)': ['AUG'],
+            'Phenylalanine': ['UUU', 'UUC'],
+            'Leucine': ['UUA', 'UUG', 'CUU', 'CUC', 'CUA', 'CUG'],
+            'Isoleucine': ['AUU', 'AUC', 'AUA'],
+            'Valine': ['GUU', 'GUC', 'GUA', 'GUG'],
+            'Serine': ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'],
+            'Proline': ['CCU', 'CCC', 'CCA', 'CCG'],
+            'Threonine': ['ACU', 'ACC', 'ACA', 'ACG'],
+            'Alanine': ['GCU', 'GCC', 'GCA', 'GCG'],
+            'Tyrosine': ['UAU', 'UAC'],
+            'STOP': ['UAA', 'UAG', 'UGA'],
+            'Histidine': ['CAU', 'CAC'],
+            'Glutamine': ['CAA', 'CAG'],
+            'Asparagine': ['AAU', 'AAC'],
+            'Lysine': ['AAA', 'AAG'],
+            'Aspartic Acid': ['GAU', 'GAC'],
+            'Glutamic Acid': ['GAA', 'GAG'],
+            'Cysteine': ['UGU', 'UGC'],
+            'Tryptophan': ['UGG'],
+            'Arginine': ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'],
+            'Glycine': ['GGU', 'GGC', 'GGA', 'GGG'],
+        };
+        const CODON_TABLE = {};
+        for (const [aa, codons] of Object.entries(CODON_GROUPS)) {
+            for (const c of codons) CODON_TABLE[c] = aa;
+        }
+        const STOP_CODONS = ['UAA', 'UAG', 'UGA'];
+
+        function wait(milliseconds) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds));
+        }
+
+        async function replicate(seq, onProgress) {
+            onProgress('replication');
+            await wait(900);
+            const complement = [...seq].map((base) => COMPLEMENT[base]).join('');
+            onProgress('replication-ready', complement);
+            return complement;
+        }
+
+        async function transcribe(seq, onProgress) {
+            onProgress('transcription');
+            await wait(900);
+            const mrna = [...seq].map((base) => TRANSCRIBE[base]).join('');
+            onProgress('transcription-ready', mrna);
+            return mrna;
+        }
+
+        async function translate(mrna, onProgress) {
+            onProgress('translation');
+            await wait(1100);
+            const translation = [];
+            const start = mrna.indexOf('AUG');
+            if (start !== -1) {
+                for (let i = start; i + 2 < mrna.length; i += 3) {
+                    const codon = mrna.slice(i, i + 3);
+                    translation.push({ codon, aminoAcid: CODON_TABLE[codon] || 'INVALID CODON' });
+                    if (STOP_CODONS.includes(codon)) break;
+                }
+            }
+            const result = { translation, startFound: start !== -1 };
+            onProgress('translation-ready', result);
+            return result;
+        }
+
+        async function analyze(input, onProgress = () => {}) {
+            const seq = String(input || '').toUpperCase().replace(/[\s,]+/g, '');
+            if (!seq) return { error: 'Please enter a DNA sequence.' };
+
+            const invalid = [...new Set([...seq].filter((b) => !COMPLEMENT[b]))];
+            if (invalid.length) {
+                return { error: 'Invalid DNA base(s): ' + invalid.join(', ') + '. DNA uses only A, T, G and C.' };
+            }
+
+            const complement = await replicate(seq, onProgress);
+            const mrna = await transcribe(seq, onProgress);
+
+            const codons = [];
+            for (let i = 0; i + 2 < mrna.length; i += 3) {
+                const codon = mrna.slice(i, i + 3);
+                const type = codon === 'AUG' ? 'START' : STOP_CODONS.includes(codon) ? 'STOP' : 'NORMAL';
+                codons.push({ codon, type });
+            }
+
+            const { translation, startFound } = await translate(mrna, onProgress);
+
+            return {
+                dna: seq, complement, mrna, codons, translation,
+                startFound,
+                leftoverBases: seq.length % 3,
+            };
+        }
+
+        // ================= UI wiring =================
+        const $ = (id) => document.getElementById(id);
+        const input = $('dna-input');
+
+        // Sequences are validated to A/T/G/C/U only, so they are safe to insert as-is
+        function fmt(seq) {
+            return seq;
+        }
+
+        function chip(html, cls) {
+            return '<span class="chip ' + (cls || 'NORMAL') + '">' + html + '</span>';
+        }
+
+        async function run() {
+            const status = $('process-status');
+            const setStatus = (stage, value) => {
+                const messages = {
+                    replication: 'Finding replication...',
+                    transcription: 'Using replication to find transcription...',
+                    translation: 'Using transcription to find translation...',
+                };
+                status.textContent = messages[stage] || 'Processing...';
+                status.classList.add('active');
+
+                if (stage === 'replication-ready') {
+                    $('out-comp').textContent = value;
+                    $('out-mrna').textContent = 'Using replication result...';
+                }
+                if (stage === 'transcription-ready') {
+                    $('out-mrna').textContent = value;
+                    $('out-codons').innerHTML = '<span class="note">Reading transcription result...</span>';
+                    $('out-translation').innerHTML = '<span class="note">Waiting for translation...</span>';
+                }
+                if (stage === 'translation-ready') {
+                    $('out-translation').innerHTML = value.translation.length
+                        ? value.translation.map((item) => chip(fmt(item.codon) + ' → ' + item.aminoAcid)).join('')
+                        : '<span class="note">No translated amino acids found.</span>';
+                }
+            };
+
+            $('error').textContent = '';
+            $('results').classList.add('show');
+            $('out-dna').textContent = input.value.trim().toUpperCase() || 'Preparing DNA sequence...';
+            $('out-comp').textContent = 'Waiting for replication...';
+            $('out-mrna').textContent = 'Waiting for replication result...';
+            $('out-codons').innerHTML = '<span class="note">Waiting for transcription result...</span>';
+            $('out-translation').innerHTML = '<span class="note">Waiting for translation...</span>';
+
+            const r = await analyze(input.value, setStatus);
+
+            if (r.error) {
+                $('error').textContent = r.error;
+                $('results').classList.remove('show');
+                status.classList.remove('active');
+                return;
+            }
+            status.textContent = 'Complete';
+            setTimeout(() => status.classList.remove('active'), 700);
+
+            $('out-dna').innerHTML = fmt(r.dna);
+            $('out-comp').innerHTML = fmt(r.complement);
+            $('out-mrna').innerHTML = fmt(r.mrna);
+
+            $('out-codons').innerHTML = r.codons.length
+                ? r.codons.map((c) => chip(fmt(c.codon) + (c.type === 'NORMAL' ? '' : ' · ' + c.type), c.type)).join('')
+                : '<span class="note">Enter at least 3 bases to form a codon.</span>';
+            $('out-leftover').textContent = r.leftoverBases
+                ? r.leftoverBases + ' leftover base(s) ignored (not a full codon).'
+                : '';
+
+            $('out-translation').innerHTML = r.translation.map((t) => {
+                const cls = t.aminoAcid === 'STOP' ? 'STOP' : t.aminoAcid.indexOf('START') !== -1 ? 'START' : 'NORMAL';
+                return chip(fmt(t.codon) + ' → ' + t.aminoAcid, cls);
+            }).join('');
+            $('out-nostart').textContent = r.startFound ? '' : 'No start codon (AUG) found, so nothing is translated.';
+
+            $('results').classList.add('show');
+        }
+
+        $('run-btn').addEventListener('click', run);
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
+
+        $('example-btn').addEventListener('click', () => {
+            input.value = 'TACGGGCTATTTACT';
+            run();
+        });
+
+        $('clear-btn').addEventListener('click', () => {
+            input.value = '';
+            $('error').textContent = '';
+            $('results').classList.remove('show');
+            input.focus();
+        });
+
+        // ================= Auth (demo: localStorage only, no server) =================
+        const USERS_KEY = 'synapse_users';
+        const SESSION_KEY = 'synapse_session';
+
+        function loadUsers() {
+            try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch (e) { return {}; }
+        }
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users)); // may throw; caller handles it
+        }
+        function getSession() {
+            try { return localStorage.getItem(SESSION_KEY); } catch (e) { return null; }
+        }
+        function setSession(email) {
+            try {
+                if (email) localStorage.setItem(SESSION_KEY, email);
+                else localStorage.removeItem(SESSION_KEY);
+            } catch (e) { /* storage unavailable */ }
+        }
+
+        function randomSalt() {
+            const a = new Uint8Array(16);
+            if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(a);
+            else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
+            return [...a].map((b) => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function hashPassword(password, salt) {
+            try {
+                if (window.crypto && window.crypto.subtle) {
+                    const data = new TextEncoder().encode(salt + password);
+                    const buf = await window.crypto.subtle.digest('SHA-256', data);
+                    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+                }
+            } catch (e) { /* fall through */ }
+            // Weak fallback if SubtleCrypto isn't available (demo only)
+            let h = 0;
+            const s = salt + password;
+            for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+            return 'x' + h;
+        }
+
+        let authMode = 'login';
+
+        function setMode(mode) {
+            authMode = mode;
+            $('tab-login').classList.toggle('active', mode === 'login');
+            $('tab-signup').classList.toggle('active', mode === 'signup');
+            $('auth-name-row').style.display = mode === 'signup' ? 'block' : 'none';
+            $('auth-submit').textContent = mode === 'signup' ? 'Create account' : 'Log in';
+            $('auth-password').setAttribute('autocomplete', mode === 'signup' ? 'new-password' : 'current-password');
+            $('auth-error').textContent = '';
+        }
+
+        function openAuth(mode) {
+            setMode(mode || 'login');
+            $('auth-modal').classList.add('open');
+            setTimeout(() => (mode === 'signup' ? $('auth-name') : $('auth-email')).focus(), 0);
+        }
+
+        function closeAuth() {
+            $('auth-modal').classList.remove('open');
+            $('auth-form').reset();
+            $('auth-error').textContent = '';
+        }
+
+        const USER_ICON =
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>';
+
+        function renderAuth() {
+            const email = getSession();
+            const user = email ? loadUsers()[email] : null;
+            const area = $('auth-area');
+            if (user) {
+                area.innerHTML =
+                    '<div class="user-menu">' +
+                    '<button type="button" class="icon-btn" id="avatar-btn" aria-label="Account menu"></button>' +
+                    '<div class="user-dropdown" id="user-dropdown">' +
+                    '<div class="ud-name" id="user-name"></div>' +
+                    '<div class="ud-email" id="user-email"></div>' +
+                    '<button type="button" class="ud-logout" id="logout-btn">Log out</button>' +
+                    '</div></div>';
+                // textContent avoids HTML injection from user-provided names
+                $('avatar-btn').textContent = (user.name || '?').charAt(0).toUpperCase();
+                $('avatar-btn').setAttribute('title', user.name);
+                $('user-name').textContent = user.name;
+                $('user-email').textContent = email;
+                $('avatar-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    $('user-dropdown').classList.toggle('open');
+                });
+                $('logout-btn').addEventListener('click', () => { setSession(null); renderAuth(); });
+            } else {
+                area.innerHTML = '<span class="login-prompt">login to save your progress</span>' +
+                    '<button type="button" class="icon-btn" id="login-btn" ' +
+                    'aria-label="Log in" title="Log in">' + USER_ICON + '</button>';
+                $('login-btn').addEventListener('click', () => openAuth('login'));
+            }
+        }
+
+        // Click anywhere else to close the account dropdown
+        document.addEventListener('click', () => {
+            const d = $('user-dropdown');
+            if (d) d.classList.remove('open');
+        });
+
+        $('tab-login').addEventListener('click', () => setMode('login'));
+        $('tab-signup').addEventListener('click', () => setMode('signup'));
+        $('google-login').addEventListener('click', () => {
+            $('auth-error').textContent = 'Google sign-in requires OAuth credentials and a backend.';
+        });
+        $('auth-close').addEventListener('click', closeAuth);
+        $('auth-modal').addEventListener('click', (e) => { if (e.target === $('auth-modal')) closeAuth(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAuth(); });
+
+        $('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fail = (msg) => { $('auth-error').textContent = msg; };
+
+            const email = $('auth-email').value.trim().toLowerCase();
+            const password = $('auth-password').value;
+            const name = $('auth-name').value.trim();
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail('Enter a valid email address.');
+            if (password.length < 6) return fail('Password must be at least 6 characters.');
+
+            const users = loadUsers();
+
+            if (authMode === 'signup') {
+                if (!name) return fail('Please enter your name.');
+                if (users[email]) return fail('An account with this email already exists. Try logging in.');
+                const salt = randomSalt();
+                users[email] = { name, salt, hash: await hashPassword(password, salt) };
+                try { saveUsers(users); } catch (err) { return fail('Could not save the account (browser storage unavailable).'); }
+            } else {
+                const user = users[email];
+                if (!user || user.hash !== await hashPassword(password, user.salt)) {
+                    return fail('Incorrect email or password.');
+                }
+            }
+
+            setSession(email);
+            closeAuth();
+            renderAuth();
+        });
+
+        renderAuth();
+
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.play().catch(() => {});
+                } else {
+                    entry.target.pause();
+                }
+            });
+        }, { threshold: 0.35 });
+
+        document.querySelectorAll('.process-video').forEach((video) => videoObserver.observe(video));
+
+        const descriptionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.process-description').forEach((description) => {
+            descriptionObserver.observe(description);
+        });
+
+        document.querySelectorAll('.nav-links a[href^="#"]').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                const target = document.querySelector(link.getAttribute('href'));
+                if (!target) return;
+                event.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+
+</html>
