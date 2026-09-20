@@ -50,7 +50,16 @@ You can also use the Live Server extension in VS Code.
 
 ## Firebase Authentication
 
-The project uses Firebase Authentication for Google sign-in.
+The project uses the Firebase browser SDK from the Google CDN for Google
+sign-in with a popup flow. Firebase updates the account icon after the user
+signs in or out.
+
+The current application logic, Firebase integration, simulator, and interface
+are contained in `index.html`.
+
+Email/password authentication is still a local browser demo. It stores demo
+accounts in localStorage and should not be used for real passwords or
+production account management.
 
 Before testing authentication:
 
@@ -62,6 +71,20 @@ Before testing authentication:
 6. Confirm that the Firebase configuration in `index.html` belongs to the same project.
 
 The Firebase web configuration is intended for frontend use. Never place service-account private keys or other server secrets in `index.html`.
+
+### Authentication Troubleshooting
+
+If Firebase displays `auth/unauthorized-domain`, the page is probably being
+opened from a `file://` URL or from a domain that Firebase does not recognize.
+Run the project through a web server and add the domain in Firebase:
+
+```bash
+python3 -m http.server 5500
+```
+
+For local testing, open `http://localhost:5500/index.html`. For production,
+open the Vercel URL and add that exact hostname under Firebase **Authorized
+domains**.
 
 ## Deploy With Vercel
 
@@ -83,8 +106,7 @@ Synapse/
 ├── dna.mp4
 ├── replicatin.mov
 ├── transcription.mov
-├── translati.mov
-└── synapse.js
+└── translati.mov
 ```
 
 ## Educational Scope
