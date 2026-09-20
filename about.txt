@@ -1,2 +1,67 @@
-it is a dna to protein generator
-(wait for future updates)
+SYNAPSE
+=======
+
+Synapse is an interactive DNA-to-protein learning simulator. It helps students
+follow the flow of genetic information from DNA to RNA and finally to a chain
+of amino acids.
+
+WHAT THE SIMULATOR DOES
+-----------------------
+
+The simulator accepts a DNA sequence containing the bases A, T, G, and C.
+Spaces, commas, and lowercase letters are handled automatically. After the
+sequence is submitted, Synapse processes the result in three connected stages:
+
+1. Replication
+	The simulator creates the complementary DNA strand using base-pair rules:
+	A pairs with T, and G pairs with C.
+
+2. Transcription
+	The DNA sequence is used to produce an mRNA sequence. During this step,
+	thymine is represented by uracil in RNA, following the rules A to U, T to A,
+	G to C, and C to G.
+
+3. Translation
+	The mRNA is divided into codons of three bases. Synapse searches for the
+	start codon AUG, converts codons into amino acids, and stops translation
+	when it reaches UAA, UAG, or UGA.
+
+The simulator presents these stages asynchronously. Replication is completed
+before transcription begins, and translation begins only after the mRNA result
+is available. A progress indicator makes this sequence visible to the user.
+
+LEARNING MATERIAL
+-----------------
+
+The page includes educational videos for replication, transcription, and
+translation. Each video is muted and begins playing when it enters the visible
+area of the page. The videos pause when they are scrolled away. Explanations
+beneath the videos describe the biological role of each process.
+
+VISUAL DESIGN
+-------------
+
+Synapse uses a glass-style interface with translucent panels, blurred layers,
+responsive layouts, and a fixed navigation bar. The page adapts to desktop and
+mobile screens. The navigation links provide direct access to the simulator,
+replication, transcription, and translation sections.
+
+ACCOUNT FEATURES
+----------------
+
+The project includes a login interface with email-based demo authentication
+and Google sign-in through Firebase Authentication. Google sign-in requires the
+Firebase project configuration, an enabled Google provider, and the deployed
+domain to be listed under Firebase Authorized Domains.
+
+PROJECT STATUS
+--------------
+
+Synapse is an educational project and a work in progress. It is intended for
+learning and visualization rather than medical, diagnostic, or research use.
+The simulator demonstrates the basic central dogma of molecular biology and
+does not replace a laboratory tool, textbook, or qualified scientific guidance.
+
+The project will continue to receive improvements in biological coverage,
+visual explanations, saved progress, accessibility, and interactive learning
+features.
